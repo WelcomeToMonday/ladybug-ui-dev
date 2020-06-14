@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "WYZmMufMTmpprFvJDISSVWbBeZZQP1SduZnPHs0iPGcJYX+LXbkwTG48x5Kra0+y7y6dAWmYY43P0u6vsV+p2A==",
+  "success": true,
+  "projectFilePath": "/home/max/Projects/ladybug-ui-dev/xplatform/xplatform.csproj",
+  "expectedPackageFiles": [
+    "/home/max/.nuget/packages/monogame.content.builder.task/3.8.0.1375-develop/monogame.content.builder.task.3.8.0.1375-develop.nupkg.sha512",
+    "/home/max/.nuget/packages/monogame.framework.desktopgl/3.8.0.1375-develop/monogame.framework.desktopgl.3.8.0.1375-develop.nupkg.sha512"
+  ],
+  "logs": []
+}
