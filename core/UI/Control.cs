@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Ladybug.Core.UI
 {
@@ -21,13 +22,19 @@ namespace Ladybug.Core.UI
 		public event EventHandler GotFocus;
 		public event EventHandler LostFocus;
 
+		public event EventHandler PositionChanged;
+
 		public event EventHandler Click;
 
 		#endregion
 
 		#region Properties
 
-		public Rectangle Bounds { get; set; }
+		public Rectangle Bounds { get; private set; }
+
+		public Vector2 LocalPosition { get => Bounds.Location.ToVector2() - Parent.Bounds.Location.ToVector2(); }
+
+		public Vector2 GlobalPosition { get => Bounds.Location.ToVector2(); }
 
 		public Control Parent { get; set; }
 
@@ -66,6 +73,29 @@ namespace Ladybug.Core.UI
 		public bool Enabled { get; set; } = true;
 
 		public bool Focused { get; set; }
+
+		public Texture2D BackgroundImage { get; set; }
+
+		public SpriteFont Font { get; set; }
+
+		#endregion
+
+		#region Methods
+
+		public abstract void Draw(SpriteBatch spriteBatch);
+
+		public void SetBounds(Rectangle newBounds, bool globalPositioning = false)
+		{
+			Vector2 pos = globalPositioning? newBounds.Location.ToVector2() : Parent.Bounds.Location.ToVector2() + newBounds.Location.ToVector2();
+			Bounds = new Rectangle((int)pos.X, (int)pos.Y, newBounds.Width, newBounds.Height);
+			PositionChanged?.Invoke(this, new EventArgs());
+		}
+
+		public void SetPosition(Vector2 newPos, bool globalPositioning = false)
+		{
+			Rectangle newBounds = new Rectangle((int)newPos.X, (int)newPos.Y, Bounds.Width, Bounds.Height);
+			SetBounds(newBounds, globalPositioning);
+		}
 
 		#endregion
 	}
