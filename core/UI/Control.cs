@@ -97,6 +97,14 @@ namespace Ladybug.Core.UI
 			SetBounds(newBounds, globalPositioning);
 		}
 
+		public virtual void AddControl(Control newControl)
+		{
+			Controls.Add(newControl);
+			PositionChanged += newControl.OnParentPositionChange;
+		}
+
+		private void OnParentPositionChange(object sender, EventArgs e) => SetBounds(Bounds);
+
 		#endregion
 	}
 }
