@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -28,7 +29,28 @@ namespace Ladybug.Core.UI
 
 		#endregion
 
+		#region Constructors
+
+		public Control()
+		{
+
+		}
+
+		public Control(Control parentControl = null, string name = "") : this()
+		{
+			Name = name;
+			if (parentControl != null)
+			{
+				parentControl.AddControl(this);
+			}
+			Initialize();
+		}
+
+		#endregion
+
 		#region Properties
+
+		public UI UI { get; set; }
 
 		public Rectangle Bounds { get; private set; }
 
@@ -82,10 +104,26 @@ namespace Ladybug.Core.UI
 
 		#region Methods
 
-		public abstract void Draw(SpriteBatch spriteBatch);
+		public virtual void Initialize()
+		{
+
+		}
+
+		public virtual void Draw(SpriteBatch spriteBatch)
+		{
+			foreach (var c in Controls)
+			{
+				c.Draw(spriteBatch);
+			}
+		}
 
 		public void SetBounds(Rectangle newBounds, bool globalPositioning = false)
 		{
+			if (Parent == null)
+			{
+				globalPositioning = true;
+			}
+
 			Vector2 pos = globalPositioning? newBounds.Location.ToVector2() : Parent.Bounds.Location.ToVector2() + newBounds.Location.ToVector2();
 			Bounds = new Rectangle((int)pos.X, (int)pos.Y, newBounds.Width, newBounds.Height);
 			PositionChanged?.Invoke(this, new EventArgs());
@@ -99,8 +137,29 @@ namespace Ladybug.Core.UI
 
 		public virtual void AddControl(Control newControl)
 		{
+			newControl.Parent = this;
+			newControl.UI = UI;
+
+			newControl.Font = UI?.DefaultFont;
+			newControl.BackgroundImage = UI?.DefaultTexture;
+
 			Controls.Add(newControl);
+			
 			PositionChanged += newControl.OnParentPositionChange;
+		}
+
+		public Control FindControl(string name, bool recurse = false)
+		{
+			var res = Controls.Where(c => c.Name == name).FirstOrDefault();
+			if (res == null && recurse)
+			{
+				foreach (var c in Controls)
+				{
+					res = c.FindControl(name, true);
+					if (res != null) break;
+				}
+			}
+			return res;
 		}
 
 		private void OnParentPositionChange(object sender, EventArgs e) => SetBounds(Bounds);

@@ -8,12 +8,30 @@ namespace Ladybug.Core.UI
 {
 	public class Button : Control
 	{
-		private Label _label;
-		private Panel _panel;
+
+		public Button(Control parentControl = null, string name = "") : base (parentControl, name)
+		{
+
+		}
+
+		public override void Initialize()
+		{
+			//UI = parentControl?.UI;
+
+			Panel = new Panel(this);
+			AddControl(Panel);
+
+			Label = new Label(this);
+			AddControl(Label);
+		}
+
 		public override void Draw(SpriteBatch spriteBatch)
 		{
-			_panel.Draw(spriteBatch);
-			_label.Draw(spriteBatch);
+			Panel.Draw(spriteBatch);
+			Label.Draw(spriteBatch);
 		}
+
+		public Panel Panel {get; set;}
+		public Label Label {get; set;}
 	}
 }
