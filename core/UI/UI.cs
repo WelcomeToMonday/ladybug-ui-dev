@@ -14,6 +14,10 @@ namespace Ladybug.Core.UI
 
 		public event EventHandler<UIControlChangeEvent> ActiveControlChanged;
 
+		public event EventHandler<UIClickEvent> ClickStart;
+		public event EventHandler<UIClickEvent> ClickHold;
+		public event EventHandler<UIClickEvent> ClickEnd;
+
 		private Panel m_rootPanel;
 
 		private MouseMonitor _mouseMonitor;
@@ -140,9 +144,11 @@ namespace Ladybug.Core.UI
 			{
 				_mouseMonitor.BeginUpdate(Mouse.GetState());
 
-				if (_mouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Pressed)) ActiveControl?.OnClickStart();
-				if (_mouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Down)) ActiveControl?.OnClickHold();
-				if (_mouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Released)) ActiveControl?.OnClickEnd();
+				var cPos = _mouseMonitor.GetCursorPosition();
+
+				if (_mouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Pressed)) ClickStart?.Invoke(this, new UIClickEvent(cPos)); //ActiveControl?.OnClickStart();
+				if (_mouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Down)) ClickHold?.Invoke(this, new UIClickEvent(cPos));//ActiveControl?.OnClickHold();
+				if (_mouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Released)) ClickEnd?.Invoke(this, new UIClickEvent(cPos)); //ActiveControl?.OnClickEnd();
 
 				_mouseMonitor.EndUpdate();
 			}

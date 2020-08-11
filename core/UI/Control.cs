@@ -126,6 +126,9 @@ namespace Ladybug.Core.UI
 			if (UI != null)
 			{
 				UI.ActiveControlChanged += OnActiveControlChange;
+				UI.ClickStart += OnUIClickStart;
+				UI.ClickHold += OnUIClickHold;
+				UI.ClickEnd += OnUIClickEnd;
 			}
 		}
 
@@ -142,20 +145,29 @@ namespace Ladybug.Core.UI
 			}
 		}
 
-		public virtual void OnClickStart()
+		public virtual void OnUIClickStart(object sender, UIClickEvent e)
 		{
-			ClickStart?.Invoke(this, new EventArgs());
+			if (Bounds.Contains(e.CursorPosition))
+			{
+				ClickStart?.Invoke(this, new EventArgs());
+			}
 		}
 
-		public virtual void OnClickHold()
+		public virtual void OnUIClickHold(object sender, UIClickEvent e)
 		{
-			ClickHold?.Invoke(this, new EventArgs());
+			if (Bounds.Contains(e.CursorPosition))
+			{
+				ClickHold?.Invoke(this, new EventArgs());
+			}
 		}
 
-		public virtual void OnClickEnd()
+		public virtual void OnUIClickEnd(object sender, UIClickEvent e)
 		{
-			ClickEnd?.Invoke(this, new EventArgs());
-			Click?.Invoke(this, new EventArgs());
+			if (Bounds.Contains(e.CursorPosition))
+			{
+				ClickEnd?.Invoke(this, new EventArgs());
+				Click?.Invoke(this, new EventArgs());
+			}
 		}
 
 		public virtual void Update()

@@ -14,8 +14,6 @@ namespace Ladybug.Core.UI
 
 		public Button(Control parentControl = null, string name = "") : base (parentControl, name)
 		{
-			CursorEnter += OnCursorEnter;
-			CursorLeave += OnCursorExit;
 			PositionChanged += OnPositionChanged;
 		}
 
@@ -46,16 +44,6 @@ namespace Ladybug.Core.UI
 					BoxHandle.CENTER), 
 				true
 			);
-		}
-
-		private void OnCursorEnter(object sender, EventArgs e)
-		{
-			UI.SetActiveControl(this);
-		}
-
-		private void OnCursorExit(object sender, EventArgs e)
-		{
-			UI.UnsetActiveControl(this);
 		}
 
 		private void OnPositionChanged(object sender, EventArgs e)
