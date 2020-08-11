@@ -64,8 +64,8 @@ public class MainScene : Scene
 		_button.CursorEnter += delegate{Console.WriteLine("Cursor Entered!");};
 		_button.CursorLeave += delegate{Console.WriteLine("Cursor Exited!"); _button.BackgroundImage = _buttonUpTexture;};
 
-		_button.Activate += delegate{Console.WriteLine("Button Activated");};
-		_button.Deactivate += delegate{Console.WriteLine("Button Deactivated");};
+		_button.Focus += delegate{Console.WriteLine("Button Focused");};
+		_button.UnFocus += delegate{Console.WriteLine("Button UnFocused");};
 
 		_button.ClickStart += delegate{_button.BackgroundImage = _buttonDownTexture;};
 		_button.ClickEnd += delegate{_button.BackgroundImage = _buttonUpTexture;};

@@ -12,7 +12,7 @@ namespace Ladybug.Core.UI
 	public class UI
 	{
 
-		public event EventHandler<UIControlChangeEvent> ActiveControlChanged;
+		public event EventHandler<UIControlChangeEvent> FocusChange;
 
 		public event EventHandler<UIClickEvent> ClickStart;
 		public event EventHandler<UIClickEvent> ClickHold;
@@ -57,7 +57,7 @@ namespace Ladybug.Core.UI
 
 		public Input Inputs { get; set; }
 
-		public Control ActiveControl { get; private set; }
+		public Control FocusedControl { get; private set; }
 
 		public SceneManager SceneManager { get; set; }
 
@@ -81,14 +81,14 @@ namespace Ladybug.Core.UI
 			RootPanel.AddControl(control);
 		}
 
-		public void SetActiveControl(Control control)
+		public void SetFocus(Control control)
 		{
-			if (ActiveControl != control)
+			if (FocusedControl != control)
 			{
-				var oldControl = ActiveControl;
+				var oldControl = FocusedControl;
 
-				ActiveControl = control;
-				ActiveControlChanged?.Invoke(this, new UIControlChangeEvent(control, oldControl));
+				FocusedControl = control;
+				FocusChange?.Invoke(this, new UIControlChangeEvent(control, oldControl));
 			}
 			/*
 			if (ActiveControl != null)
@@ -101,7 +101,7 @@ namespace Ladybug.Core.UI
 			*/
 		}
 
-		public void UnsetActiveControl(Control control)
+		public void ClearFocus()
 		{
 			/*
 			if (forceUnset)
@@ -116,7 +116,7 @@ namespace Ladybug.Core.UI
 				}
 			}
 			*/
-			SetActiveControl(null);
+			SetFocus(null);
 		}
 
 		private Vector2 GetCursorPosition()
@@ -129,9 +129,9 @@ namespace Ladybug.Core.UI
 			}
 			else
 			{
-				if (ActiveControl != null)
+				if (FocusedControl != null)
 				{
-					res = ActiveControl.Bounds.Center.ToVector2();
+					res = FocusedControl.Bounds.Center.ToVector2();
 				}
 			}
 

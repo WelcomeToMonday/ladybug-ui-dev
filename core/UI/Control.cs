@@ -24,8 +24,8 @@ namespace Ladybug.Core.UI
 
 		#region Events
 
-		public event EventHandler Activate;
-		public event EventHandler Deactivate;
+		public event EventHandler Focus;
+		public event EventHandler UnFocus;
 
 		public event EventHandler PositionChanged;
 		public event EventHandler SizeChanged;
@@ -125,23 +125,23 @@ namespace Ladybug.Core.UI
 		{
 			if (UI != null)
 			{
-				UI.ActiveControlChanged += OnActiveControlChange;
+				UI.FocusChange += OnUIFocusChange;
 				UI.ClickStart += OnUIClickStart;
 				UI.ClickHold += OnUIClickHold;
 				UI.ClickEnd += OnUIClickEnd;
 			}
 		}
 
-		protected virtual void OnActiveControlChange(object sender, UIControlChangeEvent e)
+		protected virtual void OnUIFocusChange(object sender, UIControlChangeEvent e)
 		{
 			if (e.NewControl == this)
 			{
-				Activate?.Invoke(this, new EventArgs());
+				Focus?.Invoke(this, new EventArgs());
 			}
 
 			if (e.PreviousControl == this)
 			{
-				Deactivate?.Invoke(this, new EventArgs());
+				UnFocus?.Invoke(this, new EventArgs());
 			}
 		}
 

@@ -46,7 +46,7 @@ namespace Ladybug.Core.UI
 
 		private void OnClick(object sender, EventArgs e)
 		{
-			UI.SetActiveControl(this);
+			UI.SetFocus(this);
 			UI.SceneManager.Window.TextInput += HandleTextInput;
 		}
 
@@ -57,7 +57,7 @@ namespace Ladybug.Core.UI
 
 		public override void Update()
 		{
-			if (UI.ActiveControl == this)
+			if (UI.FocusedControl == this)
 			{
 				//capture keyboard input
 			}

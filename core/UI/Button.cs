@@ -15,6 +15,7 @@ namespace Ladybug.Core.UI
 		public Button(Control parentControl = null, string name = "") : base (parentControl, name)
 		{
 			PositionChanged += OnPositionChanged;
+			ClickStart += OnClick;
 		}
 
 		public override void Initialize()
@@ -50,6 +51,11 @@ namespace Ladybug.Core.UI
 		{
 			Panel.SetBounds(Bounds, true);
 			SetLabelText(Label.Text);
+		}
+
+		public virtual void OnClick(object sender, EventArgs e)
+		{
+			UI.SetFocus(this);
 		}
 
 		public void SetLabelText(string labelText)
