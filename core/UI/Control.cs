@@ -18,14 +18,31 @@ namespace Ladybug.Core.UI
 
 		#endregion
 
+		#region Enums
+
+		#endregion
+
 		#region Events
 
 		public event EventHandler GotFocus;
 		public event EventHandler LostFocus;
 
 		public event EventHandler PositionChanged;
+		public event EventHandler SizeChanged;
 
 		public event EventHandler Click;
+		public event EventHandler ClickStart;
+		public event EventHandler ClickHold;
+		public event EventHandler ClickEnd;
+
+		public event EventHandler CursorEnter;
+		public event EventHandler CursorLeave;
+
+		#endregion
+
+		#region Member Variables
+
+		private bool _containsCursor = false;
 
 		#endregion
 
@@ -52,7 +69,7 @@ namespace Ladybug.Core.UI
 
 		public UI UI { get; set; }
 
-		public Rectangle Bounds { get; private set; }
+		public Rectangle Bounds { get; set; }
 
 		public Vector2 LocalPosition { get => Bounds.Location.ToVector2() - Parent.Bounds.Location.ToVector2(); }
 
@@ -109,6 +126,46 @@ namespace Ladybug.Core.UI
 
 		}
 
+		public virtual void OnClickStart()
+		{
+			ClickStart?.Invoke(this, new EventArgs());
+		}
+
+		public virtual void OnClickHold()
+		{
+			ClickHold?.Invoke(this, new EventArgs());
+		}
+
+		public virtual void OnClickEnd()
+		{
+			ClickEnd?.Invoke(this, new EventArgs());
+			Click?.Invoke(this, new EventArgs());
+		}
+
+		public virtual void Update()
+		{
+			if (Bounds.Contains(UI.CursorPosition))
+			{
+				if (!_containsCursor)
+				{
+					_containsCursor = true;
+					CursorEnter?.Invoke(this, new EventArgs());
+				}
+			}
+			else
+			{
+				if (_containsCursor)
+				{
+					_containsCursor = false;
+					CursorLeave?.Invoke(this, new EventArgs());
+				}
+			}
+			foreach (var c in Controls)
+			{
+				c.Update();
+			}
+		}
+
 		public virtual void Draw(SpriteBatch spriteBatch)
 		{
 			foreach (var c in Controls)
@@ -124,9 +181,10 @@ namespace Ladybug.Core.UI
 				globalPositioning = true;
 			}
 
-			Vector2 pos = globalPositioning? newBounds.Location.ToVector2() : Parent.Bounds.Location.ToVector2() + newBounds.Location.ToVector2();
+			Vector2 pos = globalPositioning ? newBounds.Location.ToVector2() : Parent.Bounds.Location.ToVector2() + newBounds.Location.ToVector2();
 			Bounds = new Rectangle((int)pos.X, (int)pos.Y, newBounds.Width, newBounds.Height);
 			PositionChanged?.Invoke(this, new EventArgs());
+			SizeChanged?.Invoke(this, new EventArgs());
 		}
 
 		public void SetPosition(Vector2 newPos, bool globalPositioning = false)
@@ -141,10 +199,14 @@ namespace Ladybug.Core.UI
 			newControl.UI = UI;
 
 			newControl.Font = UI?.DefaultFont;
-			newControl.BackgroundImage = UI?.DefaultTexture;
+
+			if (UI?.DefaultBackground != null) // keep an eye on this
+			{
+				newControl.BackgroundImage = UI.DefaultBackground;
+			}
 
 			Controls.Add(newControl);
-			
+
 			PositionChanged += newControl.OnParentPositionChange;
 		}
 

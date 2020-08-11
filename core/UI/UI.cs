@@ -1,7 +1,10 @@
 using System;
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+
+using Ladybug.Input;
 
 namespace Ladybug.Core.UI
 {
@@ -9,29 +12,44 @@ namespace Ladybug.Core.UI
 	{
 		private Panel m_rootPanel;
 
-		public UI(Rectangle bounds, SpriteFont defaultFont, Texture2D defaultBackground = null)
+		private MouseMonitor _mouseMonitor;
+		private KeyboardMonitor _keyboardMonitor;
+		private GamepadMonitor _gamepadMonitor;
+
+		public UI(UIConfig config)
 		{
-			DefaultFont = defaultFont;
-			RootPanel.SetBounds(bounds, true);
-			RootPanel.Font = defaultFont;
-			if (defaultBackground != null)
+			DefaultFont = config.DefaultFont;
+			RootPanel.SetBounds(config.Bounds, true);
+			RootPanel.Font = config.DefaultFont;
+			Inputs = config.Inputs;
+
+			if (config.DefaultBackground != null)
 			{
-				RootPanel.BackgroundImage = defaultBackground;
+				DefaultBackground = config.DefaultBackground;
 			}
+
+			_mouseMonitor = new MouseMonitor();
+			_keyboardMonitor = new KeyboardMonitor();
+			_gamepadMonitor = new GamepadMonitor();
+
 		}
-		
+
 		/*
 		public UI(string filePath)
 		{
 			// Load from file here
 		}
 		*/
-		
-		public Control this[string name] {get => RootPanel[name];}
 
-		public SpriteFont DefaultFont {get; private set;}
+		public Control this[string name] { get => RootPanel[name]; }
 
-		public Texture2D DefaultTexture {get; private set;}
+		public SpriteFont DefaultFont { get; private set; }
+
+		public Texture2D DefaultBackground { get; private set; }
+
+		public Input Inputs { get; set; }
+
+		public Control ActiveControl { get; private set; }
 
 		public Panel RootPanel
 		{
@@ -46,9 +64,78 @@ namespace Ladybug.Core.UI
 			}
 		}
 
+		public Vector2 CursorPosition { get; private set; }
+
 		public void AddControl(Control control)
 		{
 			RootPanel.AddControl(control);
+		}
+
+		public void SetActiveControl(Control control)
+		{
+			ActiveControl = control;
+		}
+
+		public void UnsetActiveControl(Control control, bool forceUnset = false)
+		{
+			if (forceUnset)
+			{
+				ActiveControl = null;
+			}
+			else
+			{
+				if (ActiveControl == control)
+				{
+					ActiveControl = null;
+				}
+			}
+		}
+
+		private Vector2 GetCursorPosition()
+		{
+			Vector2 res = Vector2.Zero;
+
+			if (Inputs.HasFlag(Input.Mouse))
+			{
+				res = _mouseMonitor.GetCursorPosition();
+			}
+			else
+			{
+				if (ActiveControl != null)
+				{
+					res = ActiveControl.Bounds.Center.ToVector2();
+				}
+			}
+
+			return res;
+		}
+
+		private void HandleInput()
+		{
+			if (Inputs.HasFlag(Input.Mouse))
+			{
+				_mouseMonitor.BeginUpdate(Mouse.GetState());
+
+				if (_mouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Pressed)) ActiveControl?.OnClickStart();
+				if (_mouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Down)) ActiveControl?.OnClickHold();
+				if (_mouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Released)) ActiveControl?.OnClickEnd();
+
+				_mouseMonitor.EndUpdate();
+			}
+			if (Inputs.HasFlag(Input.Keyboard))
+			{
+				_keyboardMonitor.BeginUpdate(Keyboard.GetState());
+
+				_keyboardMonitor.EndUpdate();
+			} 
+			
+			CursorPosition = GetCursorPosition();
+		}
+
+		public void Update()
+		{
+			HandleInput();
+			RootPanel.Update();
 		}
 
 		public void Draw(SpriteBatch spriteBatch)
