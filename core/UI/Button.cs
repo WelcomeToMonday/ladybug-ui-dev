@@ -21,6 +21,7 @@ namespace Ladybug.Core.UI
 
 		public override void Initialize()
 		{
+			base.Initialize();
 			//UI = parentControl?.UI;
 
 			Panel = new Panel(this);

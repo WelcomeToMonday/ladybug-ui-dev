@@ -3,6 +3,8 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using Ladybug.SceneManagement;
+
 namespace Ladybug.Core.UI
 {
 	[Flags]
@@ -14,18 +16,21 @@ namespace Ladybug.Core.UI
 	}
 	public class UIConfig
 	{
-		public UIConfig(SpriteFont defaultFont)
+		public UIConfig(SceneManager sceneManager, SpriteFont defaultFont)
 		{
 			DefaultFont = defaultFont;
+			SceneManager = sceneManager;
 		}
 
-		public Input Inputs {get; set;} = Input.Mouse | Input.Keyboard;
+		public Input Inputs { get; set; } = Input.Mouse | Input.Keyboard;
 
-		public SpriteFont DefaultFont {get; set;}
+		public SceneManager SceneManager { get; set; }
 
-		public Texture2D DefaultBackground {get; set;}
+		public SpriteFont DefaultFont { get; set; }
 
-		public Rectangle Bounds {get; set;} = new Rectangle(0, 0, 0, 0);
+		public Texture2D DefaultBackground { get; set; }
+
+		public Rectangle Bounds { get; set; } = new Rectangle(0, 0, 0, 0);
 	}
 
 }

@@ -47,7 +47,7 @@ public class MainScene : Scene
 	{
 		var screenBounds = SceneManager.GraphicsDevice.PresentationParameters.Bounds;
 
-		var config = new UIConfig(_font)
+		var config = new UIConfig(SceneManager, _font)
 		{
 			Bounds = new Rectangle(0, 0, screenBounds.Width, screenBounds.Height),
 			DefaultBackground = _buttonUpTexture
@@ -64,14 +64,15 @@ public class MainScene : Scene
 		_button.CursorEnter += delegate{Console.WriteLine("Cursor Entered!");};
 		_button.CursorLeave += delegate{Console.WriteLine("Cursor Exited!"); _button.BackgroundImage = _buttonUpTexture;};
 
+		_button.Activate += delegate{Console.WriteLine("Button Activated");};
+		_button.Deactivate += delegate{Console.WriteLine("Button Deactivated");};
+
 		_button.ClickStart += delegate{_button.BackgroundImage = _buttonDownTexture;};
 		_button.ClickEnd += delegate{_button.BackgroundImage = _buttonUpTexture;};
 
 		_button.Click += delegate{Console.WriteLine("click!");};
 
 		_button.SetBounds(_button.Bounds.CopyAtOffset(30, 30));
-
-		Console.WriteLine(_font.MeasureString(_button.Label.Text));
 	}
 
 	public override void Update(GameTime gameTime)

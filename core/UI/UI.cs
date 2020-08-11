@@ -5,11 +5,15 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 
 using Ladybug.Input;
+using Ladybug.SceneManagement;
 
 namespace Ladybug.Core.UI
 {
 	public class UI
 	{
+
+		public event EventHandler<UIControlChangeEvent> ActiveControlChanged;
+
 		private Panel m_rootPanel;
 
 		private MouseMonitor _mouseMonitor;
@@ -51,6 +55,8 @@ namespace Ladybug.Core.UI
 
 		public Control ActiveControl { get; private set; }
 
+		public SceneManager SceneManager { get; set; }
+
 		public Panel RootPanel
 		{
 			get
@@ -73,11 +79,27 @@ namespace Ladybug.Core.UI
 
 		public void SetActiveControl(Control control)
 		{
+			if (ActiveControl != control)
+			{
+				var oldControl = ActiveControl;
+
+				ActiveControl = control;
+				ActiveControlChanged?.Invoke(this, new UIControlChangeEvent(control, oldControl));
+			}
+			/*
+			if (ActiveControl != null)
+			{
+				ActiveControl.DoDeactivate();
+			}
+			
 			ActiveControl = control;
+			control.DoActivate();
+			*/
 		}
 
-		public void UnsetActiveControl(Control control, bool forceUnset = false)
+		public void UnsetActiveControl(Control control)
 		{
+			/*
 			if (forceUnset)
 			{
 				ActiveControl = null;
@@ -89,6 +111,8 @@ namespace Ladybug.Core.UI
 					ActiveControl = null;
 				}
 			}
+			*/
+			SetActiveControl(null);
 		}
 
 		private Vector2 GetCursorPosition()
@@ -127,8 +151,8 @@ namespace Ladybug.Core.UI
 				_keyboardMonitor.BeginUpdate(Keyboard.GetState());
 
 				_keyboardMonitor.EndUpdate();
-			} 
-			
+			}
+
 			CursorPosition = GetCursorPosition();
 		}
 
