@@ -18,6 +18,7 @@ public class MainScene : Scene
 	private Texture2D _buttonDownTexture;
 
 	private Button _button;
+	private TextBox _textBox;
 
 	private KeyboardMonitor _keyboardMonitor;
 
@@ -61,8 +62,8 @@ public class MainScene : Scene
 
 		_button.SetLabelText("X");
 
-		_button.CursorEnter += delegate{Console.WriteLine("Cursor Entered!");};
-		_button.CursorLeave += delegate{Console.WriteLine("Cursor Exited!"); _button.BackgroundImage = _buttonUpTexture;};
+		_button.CursorEnter += delegate{Console.WriteLine("Button Entered!");};
+		_button.CursorLeave += delegate{Console.WriteLine("Button Exited!"); _button.BackgroundImage = _buttonUpTexture;};
 
 		_button.Focus += delegate{Console.WriteLine("Button Focused");};
 		_button.UnFocus += delegate{Console.WriteLine("Button UnFocused");};
@@ -73,7 +74,17 @@ public class MainScene : Scene
 		_button.Click += delegate{Console.WriteLine("click!");};
 
 		_button.SetBounds(_button.Bounds.CopyAtOffset(30, 30));
-	}
+
+		_textBox = new TextBox(_ui.RootPanel);
+
+		_textBox.SetBounds(_textBox.Bounds.CopyAtPosition(120,120));
+
+		_textBox.CursorEnter += delegate{Console.WriteLine("Textbox Entered");};
+		_textBox.CursorLeave += delegate{Console.WriteLine("Textbox Exited");};
+
+		_textBox.Focus += delegate{Console.WriteLine("Textbox Focused");};
+		_textBox.UnFocus += delegate{Console.WriteLine("Textbox Unfocused");};
+		}
 
 	public override void Update(GameTime gameTime)
 	{

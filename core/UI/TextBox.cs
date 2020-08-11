@@ -10,10 +10,12 @@ namespace Ladybug.Core.UI
 {
 	public class TextBox : Control
 	{
-		public TextBox(Control parentControl, string name ="") : base(parentControl, name)
+		public TextBox(Control parentControl = null, string name ="") : base(parentControl, name)
 		{
 			PositionChanged += OnPositionChanged;
-			Click += OnClick;
+			ClickStart += OnClick;
+			Focus += OnFocus;
+			UnFocus += OnUnFocus;
 		}
 
 		public Panel Panel { get; set; }
@@ -21,12 +23,13 @@ namespace Ladybug.Core.UI
 
 		public override void Initialize()
 		{
+			base.Initialize();	
 			Panel = new Panel(this);
 			Label = new Label(this);
 
 			Panel.BackgroundImage = null;
 			Panel.SetBounds(
-				new Rectangle(0, 0, 100, (int)Label.Font.MeasureString(" ").Y)
+				new Rectangle(0, 0, 400, (int)Label.Font.MeasureString(" ").Y + 10)
 			);
 
 			SetBounds(Panel.Bounds);
@@ -37,7 +40,10 @@ namespace Ladybug.Core.UI
 			Panel.SetBounds(Bounds, true);
 			Label.SetBounds(Label.Bounds.CopyAtPosition
 				(
-					Panel.Bounds.GetHandlePosition(BoxHandle.BOTTOMLEFT),
+					new Vector2(
+						(int)Panel.Bounds.GetHandlePosition(BoxHandle.BOTTOMLEFT).X + 5,
+						(int)Panel.Bounds.GetHandlePosition(BoxHandle.BOTTOMLEFT).Y - 5
+					),
 					BoxHandle.BOTTOMLEFT
 				),
 				true
@@ -47,7 +53,16 @@ namespace Ladybug.Core.UI
 		private void OnClick(object sender, EventArgs e)
 		{
 			UI.SetFocus(this);
+		}
+
+		public virtual void OnFocus(object sender, EventArgs e)
+		{
 			UI.SceneManager.Window.TextInput += HandleTextInput;
+		}
+
+		public virtual void OnUnFocus(object sender, EventArgs e)
+		{
+			UI.SceneManager.Window.TextInput -= HandleTextInput;
 		}
 
 		public void HandleTextInput(object sender, TextInputEventArgs e)
@@ -57,7 +72,7 @@ namespace Ladybug.Core.UI
 
 		public override void Update()
 		{
-			if (UI.FocusedControl == this)
+			if (HasFocus)
 			{
 				//capture keyboard input
 			}
@@ -82,7 +97,7 @@ namespace Ladybug.Core.UI
 				);
 			}
 			Panel.Draw(spriteBatch);
-			Panel.Draw(spriteBatch);
+			Label.Draw(spriteBatch);
 		}
 	}
 }

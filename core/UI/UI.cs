@@ -30,6 +30,7 @@ namespace Ladybug.Core.UI
 			RootPanel.SetBounds(config.Bounds, true);
 			RootPanel.Font = config.DefaultFont;
 			Inputs = config.Inputs;
+			SceneManager = config.SceneManager;
 
 			if (config.DefaultBackground != null)
 			{
@@ -146,15 +147,28 @@ namespace Ladybug.Core.UI
 
 				var cPos = _mouseMonitor.GetCursorPosition();
 
-				if (_mouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Pressed)) ClickStart?.Invoke(this, new UIClickEvent(cPos)); //ActiveControl?.OnClickStart();
-				if (_mouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Down)) ClickHold?.Invoke(this, new UIClickEvent(cPos));//ActiveControl?.OnClickHold();
-				if (_mouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Released)) ClickEnd?.Invoke(this, new UIClickEvent(cPos)); //ActiveControl?.OnClickEnd();
+				if (_mouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Pressed)) 
+				{
+					ClickStart?.Invoke(this, new UIClickEvent(cPos));
+				}
+
+				if (_mouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Down))
+				{
+					ClickHold?.Invoke(this, new UIClickEvent(cPos));
+				}
+				
+				if (_mouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Released))
+				{
+					ClickEnd?.Invoke(this, new UIClickEvent(cPos));
+				}
 
 				_mouseMonitor.EndUpdate();
 			}
 			if (Inputs.HasFlag(Input.Keyboard))
 			{
 				_keyboardMonitor.BeginUpdate(Keyboard.GetState());
+
+				if (_keyboardMonitor.CheckButton(Keys.Escape, InputState.Down)) ClearFocus();
 
 				_keyboardMonitor.EndUpdate();
 			}

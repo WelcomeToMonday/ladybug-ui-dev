@@ -111,7 +111,18 @@ namespace Ladybug.Core.UI
 
 		public bool Enabled { get; set; } = true;
 
-		public bool Focused { get; set; }
+		public bool HasFocus
+		{
+			get 
+			{
+				var res = false;
+				if (UI != null)
+				{
+					res = UI.FocusedControl == this;
+				}
+				return res;
+			}
+		}
 
 		public Texture2D BackgroundImage { get; set; }
 
