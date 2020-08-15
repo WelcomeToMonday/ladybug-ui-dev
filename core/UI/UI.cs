@@ -20,9 +20,9 @@ namespace Ladybug.Core.UI
 
 		private Panel m_rootPanel;
 
-		private MouseMonitor _mouseMonitor;
-		private KeyboardMonitor _keyboardMonitor;
-		private GamepadMonitor _gamepadMonitor;
+		protected MouseMonitor MouseMonitor {get; set;}
+		protected KeyboardMonitor KeyboardMonitor {get; set;}
+		protected GamepadMonitor GamepadMonitor{get; set;}
 
 		public UI(UIConfig config)
 		{
@@ -37,9 +37,9 @@ namespace Ladybug.Core.UI
 				DefaultBackground = config.DefaultBackground;
 			}
 
-			_mouseMonitor = new MouseMonitor();
-			_keyboardMonitor = new KeyboardMonitor();
-			_gamepadMonitor = new GamepadMonitor();
+			MouseMonitor = new MouseMonitor();
+			KeyboardMonitor = new KeyboardMonitor();
+			GamepadMonitor = new GamepadMonitor();
 
 		}
 
@@ -126,7 +126,7 @@ namespace Ladybug.Core.UI
 
 			if (Inputs.HasFlag(Input.Mouse))
 			{
-				res = _mouseMonitor.GetCursorPosition();
+				res = MouseMonitor.GetCursorPosition();
 			}
 			else
 			{
@@ -139,50 +139,50 @@ namespace Ladybug.Core.UI
 			return res;
 		}
 
-		private void HandleInput()
+		protected virtual void HandleInput()
 		{
 			if (Inputs.HasFlag(Input.Mouse))
 			{
-				_mouseMonitor.BeginUpdate(Mouse.GetState());
+				MouseMonitor.BeginUpdate(Mouse.GetState());
 
-				var cPos = _mouseMonitor.GetCursorPosition();
+				var cPos = MouseMonitor.GetCursorPosition();
 
-				if (_mouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Pressed)) 
+				if (MouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Pressed)) 
 				{
 					ClickStart?.Invoke(this, new UIClickEvent(cPos));
 				}
 
-				if (_mouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Down))
+				if (MouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Down))
 				{
 					ClickHold?.Invoke(this, new UIClickEvent(cPos));
 				}
 				
-				if (_mouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Released))
+				if (MouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Released))
 				{
 					ClickEnd?.Invoke(this, new UIClickEvent(cPos));
 				}
 
-				_mouseMonitor.EndUpdate();
+				MouseMonitor.EndUpdate();
 			}
 			if (Inputs.HasFlag(Input.Keyboard))
 			{
-				_keyboardMonitor.BeginUpdate(Keyboard.GetState());
+				KeyboardMonitor.BeginUpdate(Keyboard.GetState());
 
-				if (_keyboardMonitor.CheckButton(Keys.Escape, InputState.Down)) ClearFocus();
+				if (KeyboardMonitor.CheckButton(Keys.Escape, InputState.Down)) ClearFocus();
 
-				_keyboardMonitor.EndUpdate();
+				KeyboardMonitor.EndUpdate();
 			}
 
 			CursorPosition = GetCursorPosition();
 		}
 
-		public void Update()
+		public virtual void Update()
 		{
 			HandleInput();
 			RootPanel.Update();
 		}
 
-		public void Draw(SpriteBatch spriteBatch)
+		public virtual void Draw(SpriteBatch spriteBatch)
 		{
 			RootPanel.Draw(spriteBatch);
 		}
