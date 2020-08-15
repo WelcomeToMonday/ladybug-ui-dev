@@ -1,7 +1,9 @@
 using System;
+using System.Text;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 using Ladybug.Graphics;
 using Ladybug.Graphics.BoxModel;
@@ -10,22 +12,30 @@ namespace Ladybug.Core.UI
 {
 	public class TextBox : Control
 	{
-		public TextBox(Control parentControl = null, string name ="") : base(parentControl, name)
+		private StringBuilder _stringBuilder;
+
+		public TextBox(Control parentControl = null, string name = "") : base(parentControl, name)
 		{
 			PositionChanged += OnPositionChanged;
 			ClickStart += OnClick;
 			Focus += OnFocus;
 			UnFocus += OnUnFocus;
+			ClickOut += OnClickOut;
 		}
 
 		public Panel Panel { get; set; }
 		public Label Label { get; set; }
 
+		public int MaxCharacters { get; set; } = 16;
+
 		public override void Initialize()
 		{
-			base.Initialize();	
+			base.Initialize();
+
 			Panel = new Panel(this);
 			Label = new Label(this);
+
+			_stringBuilder = new StringBuilder(Label.Text);
 
 			Panel.BackgroundImage = null;
 			Panel.SetBounds(
@@ -50,7 +60,7 @@ namespace Ladybug.Core.UI
 			);
 		}
 
-		private void OnClick(object sender, EventArgs e)
+		public virtual void OnClick(object sender, EventArgs e)
 		{
 			UI.SetFocus(this);
 		}
@@ -60,14 +70,40 @@ namespace Ladybug.Core.UI
 			UI.SceneManager.Window.TextInput += HandleTextInput;
 		}
 
+		public virtual void OnClickOut(object sender, EventArgs e)
+		{
+			if (HasFocus)
+			{
+				UI.ClearFocus();
+			}
+		}
+
 		public virtual void OnUnFocus(object sender, EventArgs e)
 		{
 			UI.SceneManager.Window.TextInput -= HandleTextInput;
 		}
 
-		public void HandleTextInput(object sender, TextInputEventArgs e)
+		public virtual void HandleTextInput(object sender, TextInputEventArgs e)
 		{
+			var glpyhs = Font.GetGlyphs();
 
+			if (e.Key == Keys.Back)
+			{
+				if (_stringBuilder.Length > 0)
+				{
+					_stringBuilder.Remove(_stringBuilder.Length - 1, 1);
+				}
+			}
+			else if (e.Key != Keys.Enter && _stringBuilder.Length <= MaxCharacters)
+			{
+				if (glpyhs.ContainsKey(e.Character))
+				{
+					_stringBuilder.Append(e.Character);
+				}
+			}
+
+
+			Label.SetText(_stringBuilder.ToString());
 		}
 
 		public override void Update()

@@ -16,6 +16,7 @@ namespace Ladybug.Core.UI
 		{
 			PositionChanged += OnPositionChanged;
 			ClickStart += OnClick;
+			ClickOut += OnClickOut;
 		}
 
 		public override void Initialize()
@@ -56,6 +57,14 @@ namespace Ladybug.Core.UI
 		public virtual void OnClick(object sender, EventArgs e)
 		{
 			UI.SetFocus(this);
+		}
+
+		public virtual void OnClickOut(object sender, EventArgs e)
+		{
+			if (HasFocus)
+			{
+				UI.ClearFocus();
+			}
 		}
 
 		public void SetLabelText(string labelText)

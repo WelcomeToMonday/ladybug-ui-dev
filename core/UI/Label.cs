@@ -30,6 +30,7 @@ namespace Ladybug.Core.UI
 
 		public void SetText (string newText)
 		{
+			Text = newText;
 			if (_textSprite == null)
 			{
 				_textSprite = new TextSprite(newText, Font, new Rectangle(0, 0, 1000, 1000));
@@ -41,7 +42,7 @@ namespace Ladybug.Core.UI
 				1000));
 			_textSprite.SetText(newText);
 			_textSprite.SetBoundsToText();
-			SetBounds(_textSprite.Bounds);
+			SetBounds(_textSprite.Bounds, true);
 		}
 
 		private void OnPositionChanged(object sender, EventArgs e)

@@ -34,6 +34,7 @@ namespace Ladybug.Core.UI
 		public event EventHandler ClickStart;
 		public event EventHandler ClickHold;
 		public event EventHandler ClickEnd;
+		public event EventHandler ClickOut;
 
 		public event EventHandler CursorEnter;
 		public event EventHandler CursorLeave;
@@ -178,6 +179,10 @@ namespace Ladybug.Core.UI
 			{
 				ClickEnd?.Invoke(this, new EventArgs());
 				Click?.Invoke(this, new EventArgs());
+			}
+			else
+			{
+				ClickOut?.Invoke(this, new EventArgs());
 			}
 		}
 
