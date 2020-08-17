@@ -68,6 +68,8 @@ namespace Ladybug.Core.UI
 
 		#region Properties
 
+		public Control this[string name] {get => FindControl(name);}
+
 		public UI UI { get; set; }
 
 		public Rectangle Bounds { get; set; }
