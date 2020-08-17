@@ -68,7 +68,7 @@ namespace Ladybug.Core.UI
 
 		#region Properties
 
-		public Control this[string name] {get => FindControl(name);}
+		public Control this[string name] { get => FindControl(name); }
 
 		public UI UI { get; set; }
 
@@ -116,7 +116,7 @@ namespace Ladybug.Core.UI
 
 		public bool HasFocus
 		{
-			get 
+			get
 			{
 				var res = false;
 				if (UI != null)
@@ -239,21 +239,24 @@ namespace Ladybug.Core.UI
 			SetBounds(newBounds, globalPositioning);
 		}
 
-		public virtual void AddControl(Control newControl)
+		public void AddControl(Control newControl)
 		{
-			newControl.Parent = this;
-			newControl.UI = UI;
-
-			newControl.Font = UI?.DefaultFont;
-
-			if (UI?.DefaultBackground != null) // keep an eye on this
+			if (!Controls.Contains(newControl))
 			{
-				newControl.BackgroundImage = UI.DefaultBackground;
+				newControl.Parent = this;
+				newControl.UI = UI;
+
+				newControl.Font = UI?.DefaultFont;
+
+				if (UI?.DefaultBackground != null) // keep an eye on this
+				{
+					newControl.BackgroundImage = UI.DefaultBackground;
+				}
+
+				Controls.Add(newControl);
+
+				PositionChanged += newControl.OnParentPositionChange;
 			}
-
-			Controls.Add(newControl);
-
-			PositionChanged += newControl.OnParentPositionChange;
 		}
 
 		public Control FindControl(string name, bool recurse = false)
@@ -264,7 +267,7 @@ namespace Ladybug.Core.UI
 		public T FindControl<T>(string name = null, bool recurse = false, bool strictTypeMatch = false) where T : Control
 		{
 			var res = strictTypeMatch
-			?	Controls.OfType<T>().Where(control => (name == null ? true : control.Name == name) && control.GetType() == typeof(T)).FirstOrDefault()
+			? Controls.OfType<T>().Where(control => (name == null ? true : control.Name == name) && control.GetType() == typeof(T)).FirstOrDefault()
 			: Controls.OfType<T>().Where(control => control.Name == name).FirstOrDefault();
 
 			if (recurse && res == null)
@@ -282,7 +285,7 @@ namespace Ladybug.Core.UI
 
 			return res;
 		}
-		
+
 		public List<T> FindControls<T>(bool strictTypeMatch = false, bool recurse = true) where T : Control
 		{
 			var res = strictTypeMatch
