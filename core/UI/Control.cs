@@ -256,15 +256,48 @@ namespace Ladybug.Core.UI
 
 		public Control FindControl(string name, bool recurse = false)
 		{
-			var res = Controls.Where(c => c.Name == name).FirstOrDefault();
-			if (res == null && recurse)
+			return FindControl<Control>(name, recurse);
+		}
+
+		public T FindControl<T>(string name = null, bool recurse = false, bool strictTypeMatch = false) where T : Control
+		{
+			var res = strictTypeMatch
+			?	Controls.OfType<T>().Where(control => (name == null ? true : control.Name == name) && control.GetType() == typeof(T)).FirstOrDefault()
+			: Controls.OfType<T>().Where(control => control.Name == name).FirstOrDefault();
+
+			if (recurse && res == null)
 			{
 				foreach (var c in Controls)
 				{
-					res = c.FindControl(name, true);
-					if (res != null) break;
+					var subRes = c.FindControl<T>(name, recurse, strictTypeMatch);
+					if (subRes != null)
+					{
+						res = subRes;
+						break;
+					}
 				}
 			}
+
+			return res;
+		}
+		
+		public List<T> FindControls<T>(bool strictTypeMatch = false, bool recurse = true) where T : Control
+		{
+			var res = strictTypeMatch
+			? Controls.OfType<T>().Where(control => control.GetType() == typeof(T)).ToList()
+			: Controls.OfType<T>().ToList();
+
+			if (recurse)
+			{
+				Controls.ToList().ForEach(
+					control =>
+					{
+						var subRes = control.FindControls<T>(strictTypeMatch, recurse);
+						subRes.ForEach(item => res.Add(item));
+					}
+				);
+			}
+
 			return res;
 		}
 
