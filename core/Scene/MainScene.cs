@@ -99,8 +99,7 @@ public class MainScene : Scene
 		if (_keyboardMonitor.CheckButton(Keys.Right, InputState.Down))
 		{
 			_button.SetBounds(
-				_button.Bounds.CopyAtOffset(1,1),
-				true
+				_button.Bounds.CopyAtOffset(1,1)
 			);
 		}
 

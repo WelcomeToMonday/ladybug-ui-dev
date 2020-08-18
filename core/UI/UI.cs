@@ -27,7 +27,7 @@ namespace Ladybug.Core.UI
 		public UI(UIConfig config)
 		{
 			DefaultFont = config.DefaultFont;
-			RootPanel.SetBounds(config.Bounds, true);
+			RootPanel.SetBounds(config.Bounds);
 			RootPanel.Font = config.DefaultFont;
 			Inputs = config.Inputs;
 			SceneManager = config.SceneManager;

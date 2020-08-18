@@ -27,7 +27,7 @@ namespace Ladybug.Core.UI
 		public event EventHandler Focus;
 		public event EventHandler UnFocus;
 
-		public event EventHandler PositionChanged;
+		public event EventHandler<ControlMoveEvent> PositionChanged;
 		public event EventHandler SizeChanged;
 
 		public event EventHandler Click;
@@ -220,23 +220,35 @@ namespace Ladybug.Core.UI
 			}
 		}
 
-		public void SetBounds(Rectangle newBounds, bool globalPositioning = false)
+		public void SetBounds(Rectangle newBounds)
 		{
-			if (Parent == null)
-			{
-				globalPositioning = true;
-			}
-
-			Vector2 pos = globalPositioning ? newBounds.Location.ToVector2() : Parent.Bounds.Location.ToVector2() + newBounds.Location.ToVector2();
+			//Vector2 pos = PositionMode == PositionMode.ABSOLUTE ? newBounds.Location.ToVector2() : Parent.Bounds.Location.ToVector2() + newBounds.Location.ToVector2();
+			var oldBounds = Bounds;
+			Vector2 pos = newBounds.Location.ToVector2();
 			Bounds = new Rectangle((int)pos.X, (int)pos.Y, newBounds.Width, newBounds.Height);
-			PositionChanged?.Invoke(this, new EventArgs());
+			PositionChanged?.Invoke(this, new ControlMoveEvent(oldBounds.Location.ToVector2(), newBounds.Location.ToVector2()));
 			SizeChanged?.Invoke(this, new EventArgs());
 		}
 
-		public void SetPosition(Vector2 newPos, bool globalPositioning = false)
+		public void Move(int x, int y) => Move(new Vector2(x, y));
+
+		public void Move(Vector2 newPos)
+		{
+			var newBounds = new Rectangle
+			(
+				(int)Bounds.Location.X + (int)newPos.X,
+				(int)Bounds.Location.Y + (int)newPos.Y,
+				Bounds.Width,
+				Bounds.Height
+			);
+			SetBounds(newBounds);
+			PositionChanged?.Invoke(this, new ControlMoveEvent(newPos));
+		}
+
+		public void SetPosition(Vector2 newPos)
 		{
 			Rectangle newBounds = new Rectangle((int)newPos.X, (int)newPos.Y, Bounds.Width, Bounds.Height);
-			SetBounds(newBounds, globalPositioning);
+			SetBounds(newBounds);
 		}
 
 		public void AddControl(Control newControl)
@@ -306,7 +318,7 @@ namespace Ladybug.Core.UI
 			return res;
 		}
 
-		private void OnParentPositionChange(object sender, EventArgs e) => SetBounds(Bounds);
+		protected virtual void OnParentPositionChange(object sender, EventArgs e) => SetBounds(Bounds);
 
 		#endregion
 	}

@@ -42,7 +42,7 @@ namespace Ladybug.Core.UI
 				1000));
 			_textSprite.SetText(newText);
 			_textSprite.SetBoundsToText();
-			SetBounds(_textSprite.Bounds, true);
+			SetBounds(_textSprite.Bounds);
 		}
 
 		private void OnPositionChanged(object sender, EventArgs e)

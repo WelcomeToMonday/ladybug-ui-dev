@@ -47,7 +47,7 @@ namespace Ladybug.Core.UI
 
 		private void OnPositionChanged(object sender, EventArgs e)
 		{
-			Panel.SetBounds(Bounds, true);
+			Panel.SetBounds(Bounds);
 			Label.SetBounds(Label.Bounds.CopyAtPosition
 				(
 					new Vector2(
@@ -55,8 +55,7 @@ namespace Ladybug.Core.UI
 						(int)Panel.Bounds.GetHandlePosition(BoxHandle.BOTTOMLEFT).Y - 5
 					),
 					BoxHandle.BOTTOMLEFT
-				),
-				true
+				)
 			);
 		}
 
