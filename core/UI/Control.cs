@@ -234,6 +234,7 @@ namespace Ladybug.Core.UI
 
 		public void Move(Vector2 newPos)
 		{
+			var oldBounds = Bounds;
 			var newBounds = new Rectangle
 			(
 				(int)Bounds.Location.X + (int)newPos.X,
@@ -242,7 +243,7 @@ namespace Ladybug.Core.UI
 				Bounds.Height
 			);
 			SetBounds(newBounds);
-			PositionChanged?.Invoke(this, new ControlMoveEvent(newPos));
+			PositionChanged?.Invoke(this, new ControlMoveEvent(oldBounds.Location.ToVector2(), newBounds.Location.ToVector2()));
 		}
 
 		public void SetPosition(Vector2 newPos)

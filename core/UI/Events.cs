@@ -30,11 +30,14 @@ namespace Ladybug.Core.UI
 	{
 		public ControlMoveEvent(Vector2 oldPosition, Vector2 newPosition)
 		{
+			OldPosition = oldPosition;
+			NewPosition = newPosition;
+
 			var delta = newPosition - oldPosition;
 			XOffset = (int)delta.X;
 			YOffset = (int)delta.Y;
 		}
-
+		/*
 		public ControlMoveEvent(int xOffset, int yOffset)
 		{
 			XOffset = xOffset;
@@ -45,6 +48,9 @@ namespace Ladybug.Core.UI
 		{
 
 		}
+		*/
+		public Vector2 OldPosition { get; private set; }
+		public Vector2 NewPosition { get; private set; }
 
 		public int XOffset { get; private set; }
 
