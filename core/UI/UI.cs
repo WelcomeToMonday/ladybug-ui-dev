@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 
 using Ladybug.Input;
+using Ladybug.ECS;
 using Ladybug.SceneManagement;
 
 namespace Ladybug.Core.UI
@@ -20,9 +21,9 @@ namespace Ladybug.Core.UI
 
 		private Panel m_rootPanel;
 
-		protected MouseMonitor MouseMonitor {get; set;}
-		protected KeyboardMonitor KeyboardMonitor {get; set;}
-		protected GamepadMonitor GamepadMonitor{get; set;}
+		protected MouseMonitor MouseMonitor { get; set; }
+		protected KeyboardMonitor KeyboardMonitor { get; set; }
+		protected GamepadMonitor GamepadMonitor { get; set; }
 
 		public UI(UIConfig config)
 		{
@@ -57,6 +58,8 @@ namespace Ladybug.Core.UI
 		public Texture2D DefaultBackground { get; private set; }
 
 		public Input Inputs { get; set; }
+
+		public ResourceCatalog Catalog { get; set; }
 
 		public Control FocusedControl { get; private set; }
 
@@ -147,7 +150,7 @@ namespace Ladybug.Core.UI
 
 				var cPos = MouseMonitor.GetCursorPosition();
 
-				if (MouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Pressed)) 
+				if (MouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Pressed))
 				{
 					ClickStart?.Invoke(this, new UIClickEvent(cPos));
 				}
@@ -156,7 +159,7 @@ namespace Ladybug.Core.UI
 				{
 					ClickHold?.Invoke(this, new UIClickEvent(cPos));
 				}
-				
+
 				if (MouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Released))
 				{
 					ClickEnd?.Invoke(this, new UIClickEvent(cPos));
