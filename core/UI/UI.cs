@@ -142,6 +142,21 @@ namespace Ladybug.Core.UI
 			return res;
 		}
 
+		protected void OnClickStart(UIClickEvent e)
+		{
+			ClickStart?.Invoke(this, e);
+		}
+
+		protected void OnClickHold(UIClickEvent e)
+		{
+			ClickHold?.Invoke(this, e);
+		}
+
+		protected void OnClickEnd(UIClickEvent e)
+		{
+			ClickEnd?.Invoke(this, e);
+		}
+
 		protected virtual void HandleInput()
 		{
 			if (Inputs.HasFlag(Input.Mouse))
@@ -152,17 +167,17 @@ namespace Ladybug.Core.UI
 
 				if (MouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Pressed))
 				{
-					ClickStart?.Invoke(this, new UIClickEvent(cPos));
+					OnClickStart(new UIClickEvent(cPos));
 				}
 
 				if (MouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Down))
 				{
-					ClickHold?.Invoke(this, new UIClickEvent(cPos));
+					OnClickHold(new UIClickEvent(cPos));
 				}
 
 				if (MouseMonitor.CheckButton(MouseButtons.LeftClick, InputState.Released))
 				{
-					ClickEnd?.Invoke(this, new UIClickEvent(cPos));
+					OnClickEnd(new UIClickEvent(cPos));
 				}
 
 				MouseMonitor.EndUpdate();
