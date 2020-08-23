@@ -167,14 +167,6 @@ namespace Ladybug.Core.UI
 
 				MouseMonitor.EndUpdate();
 			}
-			if (Inputs.HasFlag(Input.Keyboard))
-			{
-				KeyboardMonitor.BeginUpdate(Keyboard.GetState());
-
-				if (KeyboardMonitor.CheckButton(Keys.Escape, InputState.Down)) ClearFocus();
-
-				KeyboardMonitor.EndUpdate();
-			}
 
 			CursorPosition = GetCursorPosition();
 		}
