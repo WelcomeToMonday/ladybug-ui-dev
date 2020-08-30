@@ -78,7 +78,7 @@ namespace Ladybug.Core.UI
 			}
 		}
 
-		public Vector2 CursorPosition { get; private set; }
+		public Vector2 CursorPosition { get; protected set; }
 
 		public void AddControl(Control control)
 		{
