@@ -12,8 +12,6 @@ namespace Ladybug.Core.UI
 		{
 
 		}
-
-		public Control this[string name] {get => FindControl(name);}
 		
 		public override void Draw(SpriteBatch spriteBatch)
 		{
