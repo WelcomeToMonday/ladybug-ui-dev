@@ -26,6 +26,18 @@ namespace Ladybug.Core.UI
 		public Vector2 CursorPosition { get; private set; }
 	}
 
+	public class UIStateChangeEvent : EventArgs
+	{
+		public UIStateChangeEvent(UIState newState, UIState oldState)
+		{
+			NewState = newState;
+			OldState = oldState;
+		}
+
+		public UIState NewState { get; private set; }
+		public UIState OldState { get; private set; }
+	}
+
 	public class ControlMoveEvent : EventArgs
 	{
 		public ControlMoveEvent(Vector2 oldPosition, Vector2 newPosition)
@@ -37,18 +49,7 @@ namespace Ladybug.Core.UI
 			XOffset = (int)delta.X;
 			YOffset = (int)delta.Y;
 		}
-		/*
-		public ControlMoveEvent(int xOffset, int yOffset)
-		{
-			XOffset = xOffset;
-			YOffset = yOffset;
-		}
-
-		public ControlMoveEvent(Vector2 offset) : this((int)offset.X, (int)offset.Y)
-		{
-
-		}
-		*/
+		
 		public Vector2 OldPosition { get; private set; }
 		public Vector2 NewPosition { get; private set; }
 

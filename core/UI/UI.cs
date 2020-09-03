@@ -8,6 +8,13 @@ using Ladybug.Input;
 using Ladybug.ECS;
 using Ladybug.SceneManagement;
 
+public enum UIState 
+	{
+	 ACTIVE, // Update and Draw called every frame
+	 PAUSED, // Draw called every frame, but not Update
+	 SUSPENDED // Neither Update nor Draw called
+	}
+
 namespace Ladybug.Core.UI
 {
 	public class UI
@@ -19,11 +26,15 @@ namespace Ladybug.Core.UI
 		public event EventHandler<UIClickEvent> ClickHold;
 		public event EventHandler<UIClickEvent> ClickEnd;
 
+		public event EventHandler<UIStateChangeEvent> StateChanged;
+
 		private Panel m_rootPanel;
 
 		protected MouseMonitor MouseMonitor { get; set; }
 		protected KeyboardMonitor KeyboardMonitor { get; set; }
 		protected GamepadMonitor GamepadMonitor { get; set; }
+
+		public UIState State { get; protected set; } = UIState.ACTIVE;
 
 		public UI(UIConfig config)
 		{
@@ -43,13 +54,6 @@ namespace Ladybug.Core.UI
 			GamepadMonitor = new GamepadMonitor();
 
 		}
-
-		/*
-		public UI(string filePath)
-		{
-			// Load from file here
-		}
-		*/
 
 		public Control this[string name] { get => RootPanel[name]; }
 
@@ -80,6 +84,45 @@ namespace Ladybug.Core.UI
 
 		public Vector2 CursorPosition { get; protected set; }
 
+		public void Pause()
+		{
+			if (State != UIState.PAUSED)
+			{
+				SetState(UIState.PAUSED);
+			}
+		}
+
+		public void Unpause()
+		{
+			if (State == UIState.PAUSED)
+			{
+				SetState(UIState.ACTIVE);
+			}
+		}
+
+		public void Suspend()
+		{
+			if (State != UIState.SUSPENDED)
+			{
+				SetState(UIState.SUSPENDED);
+			}
+		}
+
+		public void Unsuspend()
+		{
+			if (State == UIState.SUSPENDED)
+			{
+				SetState(UIState.ACTIVE);
+			}
+		}
+
+		public void SetState(UIState newState)
+		{
+			var oldState = State;
+			State = newState;
+			StateChanged?.Invoke(this, new UIStateChangeEvent(newState, oldState));
+		}
+
 		public void AddControl(Control control)
 		{
 			RootPanel.AddControl(control);
@@ -94,32 +137,10 @@ namespace Ladybug.Core.UI
 				FocusedControl = control;
 				FocusChange?.Invoke(this, new UIControlChangeEvent(control, oldControl));
 			}
-			/*
-			if (ActiveControl != null)
-			{
-				ActiveControl.DoDeactivate();
-			}
-			
-			ActiveControl = control;
-			control.DoActivate();
-			*/
 		}
 
 		public void ClearFocus()
 		{
-			/*
-			if (forceUnset)
-			{
-				ActiveControl = null;
-			}
-			else
-			{
-				if (ActiveControl == control)
-				{
-					ActiveControl = null;
-				}
-			}
-			*/
 			SetFocus(null);
 		}
 
@@ -188,13 +209,19 @@ namespace Ladybug.Core.UI
 
 		public virtual void Update()
 		{
-			HandleInput();
-			RootPanel.Update();
+			if (State == UIState.ACTIVE)
+			{
+				HandleInput();
+				RootPanel.Update();
+			}
 		}
 
 		public virtual void Draw(SpriteBatch spriteBatch)
 		{
-			RootPanel.Draw(spriteBatch);
+			if (State != UIState.SUSPENDED)
+			{
+				RootPanel.Draw(spriteBatch);
+			}
 		}
 	}
 }
