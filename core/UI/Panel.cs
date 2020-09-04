@@ -12,19 +12,22 @@ namespace Ladybug.Core.UI
 		{
 
 		}
-		
+
 		public override void Draw(SpriteBatch spriteBatch)
 		{
-			if (BackgroundImage != null)
+			if (Visible)
 			{
-				spriteBatch.Draw(
-					BackgroundImage,
-					Bounds,
-					null,
-					Color.White
-				);
+				if (BackgroundImage != null)
+				{
+					spriteBatch.Draw(
+						BackgroundImage,
+						Bounds,
+						null,
+						Color.White
+					);
+				}
+				base.Draw(spriteBatch);
 			}
-			base.Draw(spriteBatch);
 		}
 	}
 }

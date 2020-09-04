@@ -112,7 +112,9 @@ namespace Ladybug.Core.UI
 		}
 		private Dictionary<string, string> _attributes;
 
-		public bool Enabled { get; set; } = true;
+		public bool Enabled { get; set; } = true; //#devnote: Deprecate?
+
+		public bool Visible { get; set; } = true;
 
 		public bool HasFocus
 		{
@@ -216,7 +218,10 @@ namespace Ladybug.Core.UI
 		{
 			foreach (var c in Controls)
 			{
-				c.Draw(spriteBatch);
+				if (c.Visible)
+				{
+					c.Draw(spriteBatch);
+				}
 			}
 		}
 

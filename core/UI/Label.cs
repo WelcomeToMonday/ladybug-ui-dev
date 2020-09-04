@@ -26,30 +26,33 @@ namespace Ladybug.Core.UI
 			SetText(Text);
 		}
 
-		public string Text {get; protected set;} = "Label";
+		public string Text { get; protected set; } = "Label";
 
-		public void SetText (string newText)
+		public void SetText(string newText)
 		{
-			Text = newText;
-			if (_textSprite == null)
+			if (Font != null)
 			{
-				_textSprite = new TextSprite(newText, Font, new Rectangle(0, 0, 1000, 1000));
+				Text = newText;
+				if (_textSprite == null)
+				{
+					_textSprite = new TextSprite(newText, Font, new Rectangle(0, 0, 1000, 1000));
+				}
+				_textSprite.SetBounds(new Rectangle(
+					_textSprite.Bounds.X,
+					_textSprite.Bounds.Y,
+					1000,
+					1000));
+				_textSprite.SetText(newText);
+				_textSprite.SetBoundsToText();
+				SetBounds(_textSprite.Bounds);
 			}
-			_textSprite.SetBounds(new Rectangle(
-				_textSprite.Bounds.X, 
-				_textSprite.Bounds.Y, 
-				1000, 
-				1000));
-			_textSprite.SetText(newText);
-			_textSprite.SetBoundsToText();
-			SetBounds(_textSprite.Bounds);
 		}
 
 		private void OnPositionChanged(object sender, EventArgs e)
 		{
-			_textSprite.SetBoundsToText();
-			_textSprite.SetBounds(
-				_textSprite.Bounds.CopyAtPosition(Bounds.GetHandlePosition(BoxHandle.CENTER),BoxHandle.CENTER)
+			_textSprite?.SetBoundsToText();
+			_textSprite?.SetBounds(
+				_textSprite.Bounds.CopyAtPosition(Bounds.GetHandlePosition(BoxHandle.CENTER), BoxHandle.CENTER)
 				);
 		}
 
