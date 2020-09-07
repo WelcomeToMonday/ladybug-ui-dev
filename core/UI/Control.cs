@@ -27,6 +27,9 @@ namespace Ladybug.Core.UI
 		public event EventHandler Focus;
 		public event EventHandler UnFocus;
 
+		public event EventHandler Enabled;
+		public event EventHandler Disabled;
+
 		public event EventHandler<ControlMoveEvent> PositionChanged;
 		public event EventHandler SizeChanged;
 
@@ -112,7 +115,7 @@ namespace Ladybug.Core.UI
 		}
 		private Dictionary<string, string> _attributes;
 
-		public bool Enabled { get; set; } = true; //#devnote: Deprecate?
+		public bool IsEnabled { get; protected set; } = true;
 
 		public bool Visible { get; set; } = true;
 
@@ -163,7 +166,7 @@ namespace Ladybug.Core.UI
 
 		public virtual void OnUIClickStart(object sender, UIClickEvent e)
 		{
-			if (Bounds.Contains(e.CursorPosition))
+			if (IsEnabled && Bounds.Contains(e.CursorPosition))
 			{
 				ClickStart?.Invoke(this, new EventArgs());
 			}
@@ -171,7 +174,7 @@ namespace Ladybug.Core.UI
 
 		public virtual void OnUIClickHold(object sender, UIClickEvent e)
 		{
-			if (Bounds.Contains(e.CursorPosition))
+			if (IsEnabled && Bounds.Contains(e.CursorPosition))
 			{
 				ClickHold?.Invoke(this, new EventArgs());
 			}
@@ -179,7 +182,7 @@ namespace Ladybug.Core.UI
 
 		public virtual void OnUIClickEnd(object sender, UIClickEvent e)
 		{
-			if (Bounds.Contains(e.CursorPosition))
+			if (IsEnabled && Bounds.Contains(e.CursorPosition))
 			{
 				ClickEnd?.Invoke(this, new EventArgs());
 				Click?.Invoke(this, new EventArgs());
@@ -190,27 +193,62 @@ namespace Ladybug.Core.UI
 			}
 		}
 
+		public virtual void Enable()
+		{
+			if (!IsEnabled)
+			{
+				IsEnabled = true;
+				OnEnable();
+			}
+		}
+
+		protected void OnEnable()
+		{
+			Enabled?.Invoke(this, new EventArgs());
+		}
+
+		public virtual void Disable()
+		{
+			if (IsEnabled)
+			{
+				IsEnabled = false;
+				OnDisable();
+			}
+		}
+
+		protected void OnDisable()
+		{
+			Disabled?.Invoke(this, new EventArgs());
+		}
+
 		public virtual void Update()
 		{
-			if (Bounds.Contains(UI.CursorPosition))
+			if (IsEnabled)
 			{
-				if (!_containsCursor)
+				if (Bounds.Contains(UI.CursorPosition))
 				{
-					_containsCursor = true;
-					CursorEnter?.Invoke(this, new EventArgs());
+					if (!_containsCursor)
+					{
+						_containsCursor = true;
+						CursorEnter?.Invoke(this, new EventArgs());
+					}
+				}
+				else
+				{
+					if (_containsCursor)
+					{
+						_containsCursor = false;
+						CursorLeave?.Invoke(this, new EventArgs());
+					}
+				}
+				foreach (var c in Controls)
+				{
+					c.Update();
 				}
 			}
-			else
+			else if (!IsEnabled && _containsCursor)
 			{
-				if (_containsCursor)
-				{
-					_containsCursor = false;
-					CursorLeave?.Invoke(this, new EventArgs());
-				}
-			}
-			foreach (var c in Controls)
-			{
-				c.Update();
+				_containsCursor = false;
 			}
 		}
 
