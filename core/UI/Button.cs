@@ -47,18 +47,18 @@ namespace Ladybug.Core.UI
 			);
 		}
 
-		private void OnPositionChanged(object sender, EventArgs e)
+		protected virtual void OnPositionChanged(object sender, EventArgs e)
 		{
 			Panel.SetBounds(Bounds);
 			SetLabelText(Label.Text);
 		}
 
-		public virtual void OnClick(object sender, EventArgs e)
+		protected virtual void OnClick(object sender, EventArgs e)
 		{
 			UI.SetFocus(this);
 		}
 
-		public virtual void OnClickOut(object sender, EventArgs e)
+		protected virtual void OnClickOut(object sender, EventArgs e)
 		{
 			if (HasFocus)
 			{
