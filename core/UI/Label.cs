@@ -48,6 +48,8 @@ namespace Ladybug.Core.UI
 			}
 		}
 
+		public void SetColor(Color color) => _textSprite?.SetColor(color);
+
 		private void OnPositionChanged(object sender, EventArgs e)
 		{
 			_textSprite?.SetBoundsToText();
