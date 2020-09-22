@@ -134,7 +134,7 @@ namespace Ladybug.Core.UI
 
 		public Texture2D BackgroundImage { get; set; }
 
-		public SpriteFont Font { get; set; }
+		public SpriteFont Font { get; protected set; }
 
 		#endregion
 
@@ -272,6 +272,8 @@ namespace Ladybug.Core.UI
 			PositionChanged?.Invoke(this, new ControlMoveEvent(oldBounds.Location.ToVector2(), newBounds.Location.ToVector2()));
 			SizeChanged?.Invoke(this, new EventArgs());
 		}
+
+		public virtual void SetFont(SpriteFont font) => Font = font;
 
 		public void Move(int x, int y) => Move(new Vector2(x, y));
 

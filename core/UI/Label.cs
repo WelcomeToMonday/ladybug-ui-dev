@@ -50,6 +50,14 @@ namespace Ladybug.Core.UI
 
 		public void SetColor(Color color) => _textSprite?.SetColor(color);
 
+		public void SetScale(float scale) => _textSprite?.SetScale(scale);
+
+		public override void SetFont(SpriteFont font)
+		{
+			base.SetFont(font);
+			_textSprite?.SetFont(font);
+		}
+
 		private void OnPositionChanged(object sender, EventArgs e)
 		{
 			_textSprite?.SetBoundsToText();
@@ -60,6 +68,16 @@ namespace Ladybug.Core.UI
 
 		public override void Draw(SpriteBatch spriteBatch)
 		{
+			if (BackgroundImage != null)
+			{
+				spriteBatch.Draw
+				(
+					BackgroundImage,
+					Bounds,
+					null,
+					Color.White
+				);
+			}
 			_textSprite?.Draw(spriteBatch);
 		}
 	}

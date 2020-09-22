@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using Ladybug.SceneManagement;
+using Ladybug.ECS;
 
 namespace Ladybug.Core.UI
 {
@@ -31,6 +32,8 @@ namespace Ladybug.Core.UI
 		public Texture2D DefaultBackground { get; set; }
 
 		public Rectangle Bounds { get; set; } = new Rectangle(0, 0, 0, 0);
+
+		public ResourceCatalog Catalog { get; set; }
 	}
 
 }

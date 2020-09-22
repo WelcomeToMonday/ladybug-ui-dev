@@ -40,9 +40,10 @@ namespace Ladybug.Core.UI
 		{
 			DefaultFont = config.DefaultFont;
 			RootPanel.SetBounds(config.Bounds);
-			RootPanel.Font = config.DefaultFont;
+			RootPanel.SetFont(config.DefaultFont);
 			Inputs = config.Inputs;
 			SceneManager = config.SceneManager;
+			Catalog = config.Catalog;
 
 			if (config.DefaultBackground != null)
 			{
@@ -52,7 +53,6 @@ namespace Ladybug.Core.UI
 			MouseMonitor = new MouseMonitor();
 			KeyboardMonitor = new KeyboardMonitor();
 			GamepadMonitor = new GamepadMonitor();
-
 		}
 
 		public Control this[string name] { get => RootPanel[name]; }
